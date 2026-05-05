@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roll-to-efir"
+version = "0.1.0"
+description = "Desktop utility for transcoding raw videos to MXF using Adobe Media Encoder .epr presets"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Roll to Efir maintainers" }]
+license = { text = "MIT" }
+
+[project.scripts]
+roll-to-efir = "roll_to_efir.gui:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
