@@ -1,4 +1,11 @@
+.venv/
+venv/
+.env
 __pycache__/
-*.py[cod]
+*.pyc
 .pytest_cache/
+build/
+dist/
+*.egg-info/
 *.mxf
+codex.patch
