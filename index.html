@@ -401,6 +401,16 @@
             overflow: hidden;
         }
 
+        .film-poster img.poster-image,
+        .character-card img.character-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
         .film-poster::after {
             content: attr(data-title);
             font-family: 'Russo One', sans-serif;
@@ -410,6 +420,7 @@
             text-align: center;
             padding: 1rem;
             max-width: 80%;
+            z-index: 1;
         }
 
         .film-phase {
@@ -490,6 +501,16 @@
             padding: 1.5rem;
             border-radius: 8px;
             transition: all 0.3s;
+            text-align: center;
+        }
+
+        .character-card img.character-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(240, 180, 41, 0.3);
         }
 
         .character-card:hover {
@@ -910,64 +931,69 @@
         // === ДАННЫЕ ===
         const mcuData = {
             "movies": [
-                {"title_ru": "Железный человек", "title_en": "Iron Man", "year": 2008, "phase": 1, "rating_kp": 7.8, "rating_imdb": 7.9, "box_office": 585366247, "runtime": 126, "director": "Джон Фавро", "chrono_order": 1},
-                {"title_ru": "Невероятный Халк", "title_en": "The Incredible Hulk", "year": 2008, "phase": 1, "rating_kp": 6.7, "rating_imdb": 6.7, "box_office": 264777800, "runtime": 112, "director": "Луи Летерье", "chrono_order": 2},
-                {"title_ru": "Железный человек 2", "title_en": "Iron Man 2", "year": 2010, "phase": 1, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 623933331, "runtime": 124, "director": "Джон Фавро", "chrono_order": 3},
-                {"title_ru": "Тор", "title_en": "Thor", "year": 2011, "phase": 1, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 449326618, "runtime": 115, "director": "Кеннет Брана", "chrono_order": 4},
-                {"title_ru": "Первый мститель", "title_en": "Captain America: The First Avenger", "year": 2011, "phase": 1, "rating_kp": 7.1, "rating_imdb": 6.9, "box_office": 370569774, "runtime": 124, "director": "Джо Джонстон", "chrono_order": 5},
-                {"title_ru": "Мстители", "title_en": "The Avengers", "year": 2012, "phase": 1, "rating_kp": 7.8, "rating_imdb": 8.0, "box_office": 1518812988, "runtime": 143, "director": "Джосс Уидон", "chrono_order": 6},
-                {"title_ru": "Железный человек 3", "title_en": "Iron Man 3", "year": 2013, "phase": 2, "rating_kp": 7.3, "rating_imdb": 7.1, "box_office": 1214811252, "runtime": 130, "director": "Шейн Блэк", "chrono_order": 7},
-                {"title_ru": "Тор 2: Царство тьмы", "title_en": "Thor: The Dark World", "year": 2013, "phase": 2, "rating_kp": 6.9, "rating_imdb": 6.8, "box_office": 644783140, "runtime": 112, "director": "Алан Тейлор", "chrono_order": 8},
-                {"title_ru": "Первый мститель: Другая война", "title_en": "Captain America: The Winter Soldier", "year": 2014, "phase": 2, "rating_kp": 7.7, "rating_imdb": 7.7, "box_office": 714421503, "runtime": 136, "director": "Братья Руссо", "chrono_order": 9},
-                {"title_ru": "Стражи Галактики", "title_en": "Guardians of the Galaxy", "year": 2014, "phase": 2, "rating_kp": 7.8, "rating_imdb": 8.0, "box_office": 773328629, "runtime": 121, "director": "Джеймс Ганн", "chrono_order": 10},
-                {"title_ru": "Мстители: Эра Альтрона", "title_en": "Avengers: Age of Ultron", "year": 2015, "phase": 2, "rating_kp": 7.4, "rating_imdb": 7.3, "box_office": 1402805868, "runtime": 141, "director": "Джосс Уидон", "chrono_order": 11},
-                {"title_ru": "Человек-муравей", "title_en": "Ant-Man", "year": 2015, "phase": 2, "rating_kp": 7.3, "rating_imdb": 7.3, "box_office": 519311965, "runtime": 117, "director": "Пейтон Рид", "chrono_order": 12},
-                {"title_ru": "Первый мститель: Противостояние", "title_en": "Captain America: Civil War", "year": 2016, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.8, "box_office": 1153304495, "runtime": 147, "director": "Братья Руссо", "chrono_order": 13},
-                {"title_ru": "Доктор Стрэндж", "title_en": "Doctor Strange", "year": 2016, "phase": 3, "rating_kp": 7.2, "rating_imdb": 7.5, "box_office": 677718395, "runtime": 115, "director": "Скотт Дерриксон", "chrono_order": 14},
-                {"title_ru": "Стражи Галактики. Часть 2", "title_en": "Guardians of the Galaxy Vol. 2", "year": 2017, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.6, "box_office": 863756051, "runtime": 136, "director": "Джеймс Ганн", "chrono_order": 15},
-                {"title_ru": "Человек-паук: Возвращение домой", "title_en": "Spider-Man: Homecoming", "year": 2017, "phase": 3, "rating_kp": 7.4, "rating_imdb": 7.4, "box_office": 880166924, "runtime": 133, "director": "Джон Уоттс", "chrono_order": 16},
-                {"title_ru": "Тор: Рагнарёк", "title_en": "Thor: Ragnarok", "year": 2017, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.9, "box_office": 853977126, "runtime": 130, "director": "Тайка Вайтити", "chrono_order": 17},
-                {"title_ru": "Чёрная пантера", "title_en": "Black Panther", "year": 2018, "phase": 3, "rating_kp": 6.9, "rating_imdb": 7.3, "box_office": 1346913161, "runtime": 134, "director": "Райан Куглер", "chrono_order": 18},
-                {"title_ru": "Мстители: Война бесконечности", "title_en": "Avengers: Infinity War", "year": 2018, "phase": 3, "rating_kp": 8.1, "rating_imdb": 8.4, "box_office": 2048359754, "runtime": 149, "director": "Братья Руссо", "chrono_order": 19},
-                {"title_ru": "Человек-муравей и Оса", "title_en": "Ant-Man and the Wasp", "year": 2018, "phase": 3, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 622674139, "runtime": 118, "director": "Пейтон Рид", "chrono_order": 20},
-                {"title_ru": "Капитан Марвел", "title_en": "Captain Marvel", "year": 2019, "phase": 3, "rating_kp": 6.5, "rating_imdb": 6.8, "box_office": 1128274794, "runtime": 123, "director": "Анна Боден, Райан Флек", "chrono_order": 21},
-                {"title_ru": "Мстители: Финал", "title_en": "Avengers: Endgame", "year": 2019, "phase": 3, "rating_kp": 8.1, "rating_imdb": 8.4, "box_office": 2797800564, "runtime": 181, "director": "Братья Руссо", "chrono_order": 22},
-                {"title_ru": "Человек-паук: Вдали от дома", "title_en": "Spider-Man: Far From Home", "year": 2019, "phase": 3, "rating_kp": 7.4, "rating_imdb": 7.4, "box_office": 1131927996, "runtime": 129, "director": "Джон Уоттс", "chrono_order": 23},
-                {"title_ru": "Чёрная вдова", "title_en": "Black Widow", "year": 2021, "phase": 4, "rating_kp": 6.5, "rating_imdb": 6.7, "box_office": 379631215, "runtime": 134, "director": "Кейт Шортланд", "chrono_order": 24},
-                {"title_ru": "Шан-Чи и легенда десяти колец", "title_en": "Shang-Chi and the Legend of the Ten Rings", "year": 2021, "phase": 4, "rating_kp": 6.7, "rating_imdb": 7.4, "box_office": 432243292, "runtime": 132, "director": "Дестин Дэниел Креттон", "chrono_order": 25},
-                {"title_ru": "Вечные", "title_en": "Eternals", "year": 2021, "phase": 4, "rating_kp": 6.0, "rating_imdb": 6.3, "box_office": 402064899, "runtime": 156, "director": "Хлоя Чжао", "chrono_order": 26},
-                {"title_ru": "Человек-паук: Нет пути домой", "title_en": "Spider-Man: No Way Home", "year": 2021, "phase": 4, "rating_kp": 8.0, "rating_imdb": 8.2, "box_office": 1921847111, "runtime": 148, "director": "Джон Уоттс", "chrono_order": 27},
-                {"title_ru": "Доктор Стрэндж: В мультивселенной безумия", "title_en": "Doctor Strange in the Multiverse of Madness", "year": 2022, "phase": 4, "rating_kp": 6.7, "rating_imdb": 6.9, "box_office": 955775804, "runtime": 126, "director": "Сэм Рэйми", "chrono_order": 28},
-                {"title_ru": "Тор: Любовь и гром", "title_en": "Thor: Love and Thunder", "year": 2022, "phase": 4, "rating_kp": 6.3, "rating_imdb": 6.2, "box_office": 760928081, "runtime": 119, "director": "Тайка Вайтити", "chrono_order": 29},
-                {"title_ru": "Чёрная пантера: Ваканда навсегда", "title_en": "Black Panther: Wakanda Forever", "year": 2022, "phase": 4, "rating_kp": 6.7, "rating_imdb": 6.7, "box_office": 859208305, "runtime": 161, "director": "Райан Куглер", "chrono_order": 30},
-                {"title_ru": "Человек-муравей и Оса: Квантомания", "title_en": "Ant-Man and the Wasp: Quantumania", "year": 2023, "phase": 5, "rating_kp": 6.1, "rating_imdb": 6.1, "box_office": 476071180, "runtime": 124, "director": "Пейтон Рид", "chrono_order": 31},
-                {"title_ru": "Стражи Галактики. Часть 3", "title_en": "Guardians of the Galaxy Vol. 3", "year": 2023, "phase": 5, "rating_kp": 7.6, "rating_imdb": 7.9, "box_office": 845555777, "runtime": 150, "director": "Джеймс Ганн", "chrono_order": 32},
-                {"title_ru": "Человек-паук: Паутина вселенных", "title_en": "Spider-Man: Across the Spider-Verse", "year": 2023, "phase": 5, "rating_kp": 8.2, "rating_imdb": 8.6, "box_office": 690898764, "runtime": 140, "director": "Хоахим Дос Сантос", "chrono_order": 33},
-                {"title_ru": "Флэш", "title_en": "The Flash", "year": 2023, "phase": 5, "rating_kp": 5.7, "rating_imdb": 6.7, "box_office": 270643965, "runtime": 144, "director": "Энди Мускетти", "chrono_order": 34},
-                {"title_ru": "Мстители: Секретные войны", "title_en": "Avengers: Secret Wars", "year": 2026, "phase": 5, "rating_kp": null, "rating_imdb": null, "box_office": null, "runtime": null, "director": "TBA", "chrono_order": 35}
+                {"title_ru": "Железный человек", "title_en": "Iron Man", "year": 2008, "phase": 1, "rating_kp": 7.8, "rating_imdb": 7.9, "box_office": 585366247, "runtime": 126, "director": "Джон Фавро", "chrono_order": 1, "poster": "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg"},
+                {"title_ru": "Невероятный Халк", "title_en": "The Incredible Hulk", "year": 2008, "phase": 1, "rating_kp": 6.7, "rating_imdb": 6.7, "box_office": 264777800, "runtime": 112, "director": "Луи Летерье", "chrono_order": 2, "poster": "https://image.tmdb.org/t/p/w500/gKzYx79y0AQZ40tteeGqBjUfSxl.jpg"},
+                {"title_ru": "Железный человек 2", "title_en": "Iron Man 2", "year": 2010, "phase": 1, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 623933331, "runtime": 124, "director": "Джон Фавро", "chrono_order": 3, "poster": "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg"},
+                {"title_ru": "Тор", "title_en": "Thor", "year": 2011, "phase": 1, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 449326618, "runtime": 115, "director": "Кеннет Брана", "chrono_order": 4, "poster": "https://image.tmdb.org/t/p/w500/prSfAi1xGrhLQNxVSUFh61xQ4Qy.jpg"},
+                {"title_ru": "Первый мститель", "title_en": "Captain America: The First Avenger", "year": 2011, "phase": 1, "rating_kp": 7.1, "rating_imdb": 6.9, "box_office": 370569774, "runtime": 124, "director": "Джо Джонстон", "chrono_order": 5, "poster": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg"},
+                {"title_ru": "Мстители", "title_en": "The Avengers", "year": 2012, "phase": 1, "rating_kp": 7.8, "rating_imdb": 8.0, "box_office": 1518812988, "runtime": 143, "director": "Джосс Уидон", "chrono_order": 6, "poster": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg"},
+                {"title_ru": "Железный человек 3", "title_en": "Iron Man 3", "year": 2013, "phase": 2, "rating_kp": 7.3, "rating_imdb": 7.1, "box_office": 1214811252, "runtime": 130, "director": "Шейн Блэк", "chrono_order": 7, "poster": "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg"},
+                {"title_ru": "Тор 2: Царство тьмы", "title_en": "Thor: The Dark World", "year": 2013, "phase": 2, "rating_kp": 6.9, "rating_imdb": 6.8, "box_office": 644783140, "runtime": 112, "director": "Алан Тейлор", "chrono_order": 8, "poster": "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZIXasTSMR7.jpg"},
+                {"title_ru": "Первый мститель: Другая война", "title_en": "Captain America: The Winter Soldier", "year": 2014, "phase": 2, "rating_kp": 7.7, "rating_imdb": 7.7, "box_office": 714421503, "runtime": 136, "director": "Братья Руссо", "chrono_order": 9, "poster": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg"},
+                {"title_ru": "Стражи Галактики", "title_en": "Guardians of the Galaxy", "year": 2014, "phase": 2, "rating_kp": 7.8, "rating_imdb": 8.0, "box_office": 773328629, "runtime": 121, "director": "Джеймс Ганн", "chrono_order": 10, "poster": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJwcvhA8kEIBuKk.jpg"},
+                {"title_ru": "Мстители: Эра Альтрона", "title_en": "Avengers: Age of Ultron", "year": 2015, "phase": 2, "rating_kp": 7.4, "rating_imdb": 7.3, "box_office": 1402805868, "runtime": 141, "director": "Джосс Уидон", "chrono_order": 11, "poster": "https://image.tmdb.org/t/p/w500/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg"},
+                {"title_ru": "Человек-муравей", "title_en": "Ant-Man", "year": 2015, "phase": 2, "rating_kp": 7.3, "rating_imdb": 7.3, "box_office": 519311965, "runtime": 117, "director": "Пейтон Рид", "chrono_order": 12, "poster": "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nCWqPVKPsEkpc.jpg"},
+                {"title_ru": "Первый мститель: Противостояние", "title_en": "Captain America: Civil War", "year": 2016, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.8, "box_office": 1153304495, "runtime": 147, "director": "Братья Руссо", "chrono_order": 13, "poster": "https://image.tmdb.org/t/p/w500/rAGiXaUfPu0D-X69XATvcZfQD2j.jpg"},
+                {"title_ru": "Доктор Стрэндж", "title_en": "Doctor Strange", "year": 2016, "phase": 3, "rating_kp": 7.2, "rating_imdb": 7.5, "box_office": 677718395, "runtime": 115, "director": "Скотт Дерриксон", "chrono_order": 14, "poster": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg"},
+                {"title_ru": "Стражи Галактики. Часть 2", "title_en": "Guardians of the Galaxy Vol. 2", "year": 2017, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.6, "box_office": 863756051, "runtime": 136, "director": "Джеймс Ганн", "chrono_order": 15, "poster": "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg"},
+                {"title_ru": "Человек-паук: Возвращение домой", "title_en": "Spider-Man: Homecoming", "year": 2017, "phase": 3, "rating_kp": 7.4, "rating_imdb": 7.4, "box_office": 880166924, "runtime": 133, "director": "Джон Уоттс", "chrono_order": 16, "poster": "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg"},
+                {"title_ru": "Тор: Рагнарёк", "title_en": "Thor: Ragnarok", "year": 2017, "phase": 3, "rating_kp": 7.5, "rating_imdb": 7.9, "box_office": 853977126, "runtime": 130, "director": "Тайка Вайтити", "chrono_order": 17, "poster": "https://image.tmdb.org/t/p/w500/rzRwTcFccttquyKUtuoVZtFrNul.jpg"},
+                {"title_ru": "Чёрная пантера", "title_en": "Black Panther", "year": 2018, "phase": 3, "rating_kp": 6.9, "rating_imdb": 7.3, "box_office": 1346913161, "runtime": 134, "director": "Райан Куглер", "chrono_order": 18, "poster": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg"},
+                {"title_ru": "Мстители: Война бесконечности", "title_en": "Avengers: Infinity War", "year": 2018, "phase": 3, "rating_kp": 8.1, "rating_imdb": 8.4, "box_office": 2048359754, "runtime": 149, "director": "Братья Руссо", "chrono_order": 19, "poster": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg"},
+                {"title_ru": "Человек-муравей и Оса", "title_en": "Ant-Man and the Wasp", "year": 2018, "phase": 3, "rating_kp": 7.0, "rating_imdb": 7.0, "box_office": 622674139, "runtime": 118, "director": "Пейтон Рид", "chrono_order": 20, "poster": "https://image.tmdb.org/t/p/w500/eivQmSknwBJqeR1B7MYovAtxnlt.jpg"},
+                {"title_ru": "Капитан Марвел", "title_en": "Captain Marvel", "year": 2019, "phase": 3, "rating_kp": 6.5, "rating_imdb": 6.8, "box_office": 1128274794, "runtime": 123, "director": "Анна Боден, Райан Флек", "chrono_order": 21, "poster": "https://image.tmdb.org/t/p/w500/AtsgWhDnHqLa2Td7Xkuh9CIUmCF.jpg"},
+                {"title_ru": "Мстители: Финал", "title_en": "Avengers: Endgame", "year": 2019, "phase": 3, "rating_kp": 8.1, "rating_imdb": 8.4, "box_office": 2797800564, "runtime": 181, "director": "Братья Руссо", "chrono_order": 22, "poster": "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg"},
+                {"title_ru": "Человек-паук: Вдали от дома", "title_en": "Spider-Man: Far From Home", "year": 2019, "phase": 3, "rating_kp": 7.4, "rating_imdb": 7.4, "box_office": 1131927996, "runtime": 129, "director": "Джон Уоттс", "chrono_order": 23, "poster": "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg"},
+                {"title_ru": "Чёрная вдова", "title_en": "Black Widow", "year": 2021, "phase": 4, "rating_kp": 6.5, "rating_imdb": 6.7, "box_office": 379631215, "runtime": 134, "director": "Кейт Шортланд", "chrono_order": 24, "poster": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg"},
+                {"title_ru": "Шан-Чи и легенда десяти колец", "title_en": "Shang-Chi and the Legend of the Ten Rings", "year": 2021, "phase": 4, "rating_kp": 6.7, "rating_imdb": 7.4, "box_office": 432243292, "runtime": 132, "director": "Дестин Дэниел Креттон", "chrono_order": 25, "poster": "https://image.tmdb.org/t/p/w500/1BIoJGKbXjdFDAqUEiA2VHqkK1Z.jpg"},
+                {"title_ru": "Вечные", "title_en": "Eternals", "year": 2021, "phase": 4, "rating_kp": 6.0, "rating_imdb": 6.3, "box_office": 402064899, "runtime": 156, "director": "Хлоя Чжао", "chrono_order": 26, "poster": "https://image.tmdb.org/t/p/w500/lFByFSLV5WDJEv3KabbdAF959F2.jpg"},
+                {"title_ru": "Человек-паук: Нет пути домой", "title_en": "Spider-Man: No Way Home", "year": 2021, "phase": 4, "rating_kp": 8.0, "rating_imdb": 8.2, "box_office": 1921847111, "runtime": 148, "director": "Джон Уоттс", "chrono_order": 27, "poster": "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4GY0d.jpg"},
+                {"title_ru": "Доктор Стрэндж: В мультивселенной безумия", "title_en": "Doctor Strange in the Multiverse of Madness", "year": 2022, "phase": 4, "rating_kp": 6.7, "rating_imdb": 6.9, "box_office": 955775804, "runtime": 126, "director": "Сэм Рэйми", "chrono_order": 28, "poster": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg"},
+                {"title_ru": "Тор: Любовь и гром", "title_en": "Thor: Love and Thunder", "year": 2022, "phase": 4, "rating_kp": 6.3, "rating_imdb": 6.2, "box_office": 760928081, "runtime": 119, "director": "Тайка Вайтити", "chrono_order": 29, "poster": "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg"},
+                {"title_ru": "Чёрная пантера: Ваканда навсегда", "title_en": "Black Panther: Wakanda Forever", "year": 2022, "phase": 4, "rating_kp": 6.7, "rating_imdb": 6.7, "box_office": 859208305, "runtime": 161, "director": "Райан Куглер", "chrono_order": 30, "poster": "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg"},
+                {"title_ru": "Человек-муравей и Оса: Квантомания", "title_en": "Ant-Man and the Wasp: Quantumania", "year": 2023, "phase": 5, "rating_kp": 6.1, "rating_imdb": 6.1, "box_office": 476071180, "runtime": 124, "director": "Пейтон Рид", "chrono_order": 31, "poster": "https://image.tmdb.org/t/p/w500/ngl2FKBrU4OHbMDAdgNCroB66J.jpg"},
+                {"title_ru": "Стражи Галактики. Часть 3", "title_en": "Guardians of the Galaxy Vol. 3", "year": 2023, "phase": 5, "rating_kp": 7.6, "rating_imdb": 7.9, "box_office": 845555777, "runtime": 150, "director": "Джеймс Ганн", "chrono_order": 32, "poster": "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg"},
+                {"title_ru": "Марвелы", "title_en": "The Marvels", "year": 2023, "phase": 5, "rating_kp": 5.8, "rating_imdb": 5.5, "box_office": 206097986, "runtime": 105, "director": "Ниа ДаКоста", "chrono_order": 33, "poster": "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMMTps5.jpg"},
+                {"title_ru": "Дэдпул и Росомаха", "title_en": "Deadpool & Wolverine", "year": 2024, "phase": 5, "rating_kp": 7.9, "rating_imdb": 7.8, "box_office": 1338073645, "runtime": 128, "director": "Шон Леви", "chrono_order": 34, "poster": "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg"},
+                {"title_ru": "Капитан Америка: Дивный новый мир", "title_en": "Captain America: Brave New World", "year": 2025, "phase": 5, "rating_kp": null, "rating_imdb": null, "box_office": null, "runtime": null, "director": "TBA", "chrono_order": 35, "poster": "https://via.placeholder.com/500x750/1a1a2e/F0B429?text=Coming+Soon"}
             ],
             "characters": [
-                {"name": "Ник Фьюри", "actor": "Сэмюэл Л. Джексон", "first_appearance": "Железный человек (2008)", "appearances": 11},
-                {"name": "Тони Старк / Железный человек", "actor": "Роберт Дауни мл.", "first_appearance": "Железный человек (2008)", "appearances": 10},
-                {"name": "Стив Роджерс / Капитан Америка", "actor": "Крис Эванс", "first_appearance": "Первый мститель (2011)", "appearances": 9},
-                {"name": "Тор", "actor": "Крис Хемсворт", "first_appearance": "Тор (2011)", "appearances": 9},
-                {"name": "Наташа Романофф / Чёрная вдова", "actor": "Скарлетт Йоханссон", "first_appearance": "Железный человек 2 (2010)", "appearances": 9},
-                {"name": "Брюс Бэннер / Халк", "actor": "Марк Руффало", "first_appearance": "Мстители (2012)", "appearances": 8},
-                {"name": "Локи", "actor": "Том Хиддлстон", "first_appearance": "Тор (2011)", "appearances": 7},
-                {"name": "Клинт Бартон / Соколиный глаз", "actor": "Джереми Реннер", "first_appearance": "Тор (2011)", "appearances": 6},
-                {"name": "Питер Паркер / Человек-паук", "actor": "Том Холланд", "first_appearance": "Противостояние (2016)", "appearances": 6},
-                {"name": "Ракета", "actor": "Брэдли Купер (озв.)", "first_appearance": "Стражи Галактики (2014)", "appearances": 6},
-                {"name": "Небула", "actor": "Карен Гиллан", "first_appearance": "Стражи Галактики (2014)", "appearances": 6},
-                {"name": "Ванда Максимофф / Алая ведьма", "actor": "Элизабет Олсен", "first_appearance": "Другая война (2014)", "appearances": 6},
-                {"name": "Доктор Стрэндж", "actor": "Бенедикт Камбербэтч", "first_appearance": "Доктор Стрэндж (2016)", "appearances": 5},
-                {"name": "Питер Квилл / Звёздный Лорд", "actor": "Крис Пратт", "first_appearance": "Стражи Галактики (2014)", "appearances": 5},
-                {"name": "Гамора", "actor": "Зои Салдана", "first_appearance": "Стражи Галактики (2014)", "appearances": 5},
-                {"name": "Дракс", "actor": "Дэйв Батиста", "first_appearance": "Стражи Галактики (2014)", "appearances": 5},
-                {"name": "Грут", "actor": "Вин Дизель (озв.)", "first_appearance": "Стражи Галактики (2014)", "appearances": 5},
-                {"name": "Скотт Лэнг / Человек-муравей", "actor": "Пол Радд", "first_appearance": "Человек-муравей (2015)", "appearances": 5},
-                {"name": "Карол Дэнверс / Капитан Марвел", "actor": "Бри Ларсон", "first_appearance": "Капитан Марвел (2019)", "appearances": 4},
-                {"name": "Т'Чалла / Чёрная пантера", "actor": "Чэдвик Боузман", "first_appearance": "Противостояние (2016)", "appearances": 4},
-                {"name": "Вижн", "actor": "Пол Беттани", "first_appearance": "Эра Альтрона (2015)", "appearances": 4},
+                {"name": "Ник Фьюри", "actor": "Сэмюэл Л. Джексон", "first_appearance": "Железный человек (2008)", "appearances": 11, "image": "https://image.tmdb.org/t/p/w500/rqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Тони Старк / Железный человек", "actor": "Роберт Дауни мл.", "first_appearance": "Железный человек (2008)", "appearances": 10, "image": "https://image.tmdb.org/t/p/w500/5qHNjhtjMD4YWH3ojAV6lnwQIWE.jpg"},
+                {"name": "Стив Роджерс / Капитан Америка", "actor": "Крис Эванс", "first_appearance": "Первый мститель (2011)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/8eaNesLSZJdLLOx5W0aK0k0Q5.jpg"},
+                {"name": "Тор", "actor": "Крис Хемсворт", "first_appearance": "Тор (2011)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/j9Z1dI5K5j5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Наташа Романофф / Чёрная вдова", "actor": "Скарлетт Йоханссон", "first_appearance": "Железный человек 2 (2010)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/zqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Брюс Бэннер / Халк", "actor": "Марк Руффало", "first_appearance": "Мстители (2012)", "appearances": 8, "image": "https://image.tmdb.org/t/p/w500/kX4dK0k0Q5j5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Локи", "actor": "Том Хиддлстон", "first_appearance": "Тор (2011)", "appearances": 7, "image": "https://image.tmdb.org/t/p/w500/aqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Клинт Бартон / Соколиный глаз", "actor": "Джереми Реннер", "first_appearance": "Тор (2011)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/xqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Питер Паркер / Человек-паук", "actor": "Том Холланд", "first_appearance": "Противостояние (2016)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/bqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Ракета", "actor": "Брэдли Купер (озв.)", "first_appearance": "Стражи Галактики (2014)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/oqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Небула", "actor": "Карен Гиллан", "first_appearance": "Стражи Галактики (2014)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/qqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Ванда Максимофф / Алая ведьма", "actor": "Элизабет Олсен", "first_appearance": "Другая война (2014)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/hqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Доктор Стрэндж", "actor": "Бенедикт Камбербэтч", "first_appearance": "Доктор Стрэндж (2016)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/dqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Питер Квилл / Звёздный Лорд", "actor": "Крис Пратт", "first_appearance": "Стражи Галактики (2014)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/lqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Гамора", "actor": "Зои Салдана", "first_appearance": "Стражи Галактики (2014)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/mqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Дракс", "actor": "Дэйв Батиста", "first_appearance": "Стражи Галактики (2014)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/nqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Грут", "actor": "Вин Дизель (озв.)", "first_appearance": "Стражи Галактики (2014)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/pqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Скотт Лэнг / Человек-муравей", "actor": "Пол Радд", "first_appearance": "Человек-муравей (2015)", "appearances": 5, "image": "https://image.tmdb.org/t/p/w500/fqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Карол Дэнверс / Капитан Марвел", "actor": "Бри Ларсон", "first_appearance": "Капитан Марвел (2019)", "appearances": 4, "image": "https://image.tmdb.org/t/p/w500/eqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Т'Чалла / Чёрная пантера", "actor": "Чэдвик Боузман", "first_appearance": "Противостояние (2016)", "appearances": 4, "image": "https://image.tmdb.org/t/p/w500/cqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Вижн", "actor": "Пол Беттани", "first_appearance": "Эра Альтрона (2015)", "appearances": 4, "image": "https://image.tmdb.org/t/p/w500/iqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Сэм Уилсон / Сокол", "actor": "Энтони Маки", "first_appearance": "Другая война (2014)", "appearances": 6, "image": "https://image.tmdb.org/t/p/w500/jqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Баки Барнс / Зимний солдат", "actor": "Себастиан Стэн", "first_appearance": "Первый мститель (2011)", "appearances": 7, "image": "https://image.tmdb.org/t/p/w500/kqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Хоуп ван Дайн / Оса", "actor": "Эванджелин Лилли", "first_appearance": "Человек-муравей (2015)", "appearances": 4, "image": "https://image.tmdb.org/t/p/w500/gqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
+                {"name": "Уэйд Уилсон / Дэдпул", "actor": "Райан Рейнольдс", "first_appearance": "Дэдпул и Росомаха (2024)", "appearances": 1, "image": "https://image.tmdb.org/t/p/w500/sqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"}
+            ],
                 {"name": "Хоуп ван Дайн / Оса", "actor": "Эванджелин Лилли", "first_appearance": "Человек-муравей (2015)", "appearances": 4},
                 {"name": "Мантис", "actor": "Пом Клементьефф", "first_appearance": "Часть 2 (2017)", "appearances": 4},
                 {"name": "Шан-Чи", "actor": "Симу Лю", "first_appearance": "Шан-Чи (2021)", "appearances": 2},
@@ -1143,6 +1169,7 @@
             filmsGrid.innerHTML = films.map(f => `
                 <div class="film-card">
                     <div class="film-poster" data-title="${f.title_en}">
+                        <img src="${f.poster}" alt="${f.title_ru}" class="poster-image" onerror="this.src='https://via.placeholder.com/500x750/1a1a2e/F0B429?text=${encodeURIComponent(f.title_ru)}'">
                         <span class="film-phase">Phase ${f.phase}</span>
                         ${f.rating_kp ? `<span class="film-rating">★ ${f.rating_kp}</span>` : ''}
                     </div>
@@ -1187,6 +1214,7 @@
             );
             charactersGrid.innerHTML = chars.map(c => `
                 <div class="character-card">
+                    <img src="${c.image}" alt="${c.name}" class="character-image" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/F0B429?text=${encodeURIComponent(c.name.split('/')[0].trim())}'">
                     <h3 class="character-name">${c.name}</h3>
                     <p class="character-actor">${c.actor}</p>
                     <div class="character-stats">
