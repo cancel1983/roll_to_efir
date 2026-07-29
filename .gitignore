@@ -1,11 +1,1 @@
-.venv/
-venv/
-.env
-__pycache__/
-*.pyc
-.pytest_cache/
-build/
-dist/
-*.egg-info/
-*.mxf
-codex.patch
+(index.html is a source file, and there are no build artifacts, dependencies, or temp files in the changes)
