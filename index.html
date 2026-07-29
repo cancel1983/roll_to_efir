@@ -685,6 +685,15 @@
             padding-left: 1.5rem;
         }
 
+        .order-link {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
         .order-item::before {
             counter-increment: order-counter;
             content: counter(order-counter);
@@ -712,6 +721,9 @@
         }
 
         .artifact-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
             background: linear-gradient(145deg, rgba(240, 180, 41, 0.05), rgba(236, 29, 36, 0.05));
             border: 1px solid rgba(240, 180, 41, 0.1);
             padding: 1.5rem;
@@ -722,6 +734,14 @@
         .artifact-card:hover {
             border-color: var(--gold);
             transform: translateY(-5px);
+        }
+
+        .artifact-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 1rem;
         }
 
         .artifact-name {
@@ -968,9 +988,9 @@
                 {"title_ru": "Капитан Америка: Дивный новый мир", "title_en": "Captain America: Brave New World", "year": 2025, "phase": 5, "rating_kp": null, "rating_imdb": null, "box_office": null, "runtime": null, "director": "TBA", "chrono_order": 35, "poster": "https://via.placeholder.com/500x750/1a1a2e/F0B429?text=Coming+Soon"}
             ],
             "characters": [
-                {"name": "Ник Фьюри", "actor": "Сэмюэл Л. Джексон", "first_appearance": "Железный человек (2008)", "appearances": 11, "image": "https://image.tmdb.org/t/p/w500/rqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
-                {"name": "Тони Старк / Железный человек", "actor": "Роберт Дауни мл.", "first_appearance": "Железный человек (2008)", "appearances": 10, "image": "https://image.tmdb.org/t/p/w500/5qHNjhtjMD4YWH3ojAV6lnwQIWE.jpg"},
-                {"name": "Стив Роджерс / Капитан Америка", "actor": "Крис Эванс", "first_appearance": "Первый мститель (2011)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/8eaNesLSZJdLLOx5W0aK0k0Q5.jpg"},
+                {"name": "Ник Фьюри", "actor": "Сэмюэл Л. Джексон", "first_appearance": "Железный человек (2008)", "appearances": 11, "image": "https://image.tmdb.org/t/p/w500/7dFZJ2ZJJdcmkp05B9NWlqWJ5tq.jpg"},
+                {"name": "Тони Старк / Железный человек", "actor": "Роберт Дауни мл.", "first_appearance": "Железный человек (2008)", "appearances": 10, "image": "https://image.tmdb.org/t/p/w500/d5iDtvEjFBfnXCKfHxMBBhIa6A.jpg"},
+                {"name": "Стив Роджерс / Капитан Америка", "actor": "Крис Эванс", "first_appearance": "Первый мститель (2011)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/xWHMlgmUoRvPz2VQp7sKbPSyBHN.jpg"},
                 {"name": "Тор", "actor": "Крис Хемсворт", "first_appearance": "Тор (2011)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/j9Z1dI5K5j5j5j5j5j5j5j5j5.jpg"},
                 {"name": "Наташа Романофф / Чёрная вдова", "actor": "Скарлетт Йоханссон", "first_appearance": "Железный человек 2 (2010)", "appearances": 9, "image": "https://image.tmdb.org/t/p/w500/zqJeEO5k0Q5j5j5j5j5j5j5j5.jpg"},
                 {"name": "Брюс Бэннер / Халк", "actor": "Марк Руффало", "first_appearance": "Мстители (2012)", "appearances": 8, "image": "https://image.tmdb.org/t/p/w500/kX4dK0k0Q5j5j5j5j5j5j5j5j5.jpg"},
@@ -1019,16 +1039,16 @@
                 {"order": 20, "event": "Секретные войны", "movie": "Секретные войны", "year": 2026}
             ],
             "artifacts": [
-                {"name": "Камни Бесконечности", "description": "Шесть сингулярностей невероятной силы: Души, Времени, Пространства, Реальности, Силы и Разума", "type": "Артефакт"},
-                {"name": "Перчатка Бесконечности", "description": "Оружие, созданное для использования силы всех шести Камней", "type": "Артефакт"},
-                {"name": "Вибраниум", "description": "Редчайший металл из Ваканды, поглощающий вибрации", "type": "Материал"},
-                {"name": "Щ.И.Т.", "description": "Международная организация безопасности", "type": "Организация"},
-                {"name": "Мстители", "description": "Команда супергероев Земли", "type": "Команда"},
-                {"name": "Стражи Галактики", "description": "Группа межгалактических героев", "type": "Команда"},
-                {"name": "Десять колец", "description": "Древние артефакты силы и бессмертия", "type": "Артефакт"},
-                {"name": "Тессеракт", "description": "Контейнер для Камня Пространства", "type": "Артефакт"},
-                {"name": "Мультивселенная", "description": "Совокупность параллельных вселенных", "type": "Концепция"},
-                {"name": "Квантовый мир", "description": "Микроскопическая вселенная внутри атомов", "type": "Концепция"}
+                {"name": "Камни Бесконечности", "description": "Шесть сингулярностей невероятной силы: Души, Времени, Пространства, Реальности, Силы и Разума", "type": "Артефакт", "image": "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg", "wiki": "https://marvel.fandom.com/wiki/Infinity_Stones"},
+                {"name": "Перчатка Бесконечности", "description": "Оружие, созданное для использования силы всех шести Камней", "type": "Артефакт", "image": "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg", "wiki": "https://marvel.fandom.com/wiki/Infinity_Gauntlet"},
+                {"name": "Вибраниум", "description": "Редчайший металл из Ваканды, поглощающий вибрации", "type": "Материал", "image": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg", "wiki": "https://marvel.fandom.com/wiki/Vibranium"},
+                {"name": "Щ.И.Т.", "description": "Международная организация безопасности", "type": "Организация", "image": "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg", "wiki": "https://marvel.fandom.com/wiki/S.H.I.E.L.D."},
+                {"name": "Мстители", "description": "Команда супергероев Земли", "type": "Команда", "image": "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg", "wiki": "https://marvel.fandom.com/wiki/Avengers"},
+                {"name": "Стражи Галактики", "description": "Группа межгалактических героев", "type": "Команда", "image": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJwcvhA8kEIBuKk.jpg", "wiki": "https://marvel.fandom.com/wiki/Guardians_of_the_Galaxy"},
+                {"name": "Десять колец", "description": "Древние артефакты силы и бессмертия", "type": "Артефакт", "image": "https://image.tmdb.org/t/p/w500/1BIoJGKbXjdFDAqUEiA2VHqkK1Z.jpg", "wiki": "https://marvel.fandom.com/wiki/Ten_Rings"},
+                {"name": "Тессеракт", "description": "Контейнер для Камня Пространства", "type": "Артефакт", "image": "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg", "wiki": "https://marvel.fandom.com/wiki/Tesseract"},
+                {"name": "Мультивселенная", "description": "Совокупность параллельных вселенных", "type": "Концепция", "image": "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg", "wiki": "https://marvel.fandom.com/wiki/Multiverse"},
+                {"name": "Квантовый мир", "description": "Микроскопическая вселенная внутри атомов", "type": "Концепция", "image": "https://image.tmdb.org/t/p/w500/ngl2FKBrU4OHbMDAdgNCroB66J.jpg", "wiki": "https://marvel.fandom.com/wiki/Quantum_Realm"}
             ],
             "stats": {
                 "total_movies": 35,
@@ -1164,9 +1184,9 @@
             else if(currentSort === 'boxoffice') films.sort((a,b) => (b.box_office||0) - (a.box_office||0));
 
             filmsGrid.innerHTML = films.map(f => `
-                <div class="film-card">
+                <a href="https://www.imdb.com/find?q=${encodeURIComponent(f.title_en)}" target="_blank" rel="noopener noreferrer" class="film-card">
                     <div class="film-poster" data-title="${f.title_en}">
-                        <img src="${f.poster}" alt="${f.title_ru}" class="poster-image" onerror="this.src='https://via.placeholder.com/500x750/1a1a2e/F0B429?text=${encodeURIComponent(f.title_ru)}'">
+                        <img src="${f.poster}" alt="${f.title_ru}" class="poster-image" onerror="this.src='https://image.tmdb.org/t/p/w500/8CMqZOLNfWRG2xN3yM9Lh7R8Q6.jpg'">
                         <span class="film-phase">Phase ${f.phase}</span>
                         ${f.rating_kp ? `<span class="film-rating">★ ${f.rating_kp}</span>` : ''}
                     </div>
@@ -1177,7 +1197,7 @@
                             <span>${f.runtime ? f.runtime + ' мин' : 'TBA'}</span>
                         </div>
                     </div>
-                </div>
+                </a>
             `).join('');
         }
         renderFilms();
@@ -1211,7 +1231,7 @@
             );
             charactersGrid.innerHTML = chars.map(c => `
                 <div class="character-card">
-                    <img src="${c.image}" alt="${c.name}" class="character-image" onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/F0B429?text=${encodeURIComponent(c.name.split('/')[0].trim())}'">
+                    <img src="${c.image}" alt="${c.name}" class="character-image" onerror="this.src='https://image.tmdb.org/t/p/w500/8CMqZOLNfWRG2xN3yM9Lh7R8Q6.jpg'">
                     <h3 class="character-name">${c.name}</h3>
                     <p class="character-actor">${c.actor}</p>
                     <div class="character-stats">
@@ -1281,8 +1301,10 @@
             const order = mcuData.viewing_orders[currentOrder];
             orderList.innerHTML = order.map((m, i) => `
                 <li class="order-item">
-                    <span class="order-title">${m.title_ru}</span>
-                    <span class="order-meta">${currentOrder === 'release' ? m.year : '№'+m.chrono_order}</span>
+                    <a href="https://www.imdb.com/find?q=${encodeURIComponent(m.title_en)}" target="_blank" rel="noopener noreferrer" class="order-link">
+                        <span class="order-title">${m.title_ru}</span>
+                        <span class="order-meta">${currentOrder === 'release' ? m.year : '№'+m.chrono_order}</span>
+                    </a>
                 </li>
             `).join('');
         }
@@ -1300,11 +1322,12 @@
         // === ARTIFACTS ===
         const artifactsGrid = document.getElementById('artifactsGrid');
         artifactsGrid.innerHTML = mcuData.artifacts.map(a => `
-            <div class="artifact-card">
+            <a href="${a.wiki}" target="_blank" rel="noopener noreferrer" class="artifact-card">
+                <img src="${a.image}" alt="${a.name}" class="artifact-image" onerror="this.src='https://image.tmdb.org/t/p/w500/8CMqZOLNfWRG2xN3yM9Lh7R8Q6.jpg'">
                 <h3 class="artifact-name">${a.name}</h3>
                 <span class="artifact-type">${a.type}</span>
                 <p class="artifact-desc">${a.description}</p>
-            </div>
+            </a>
         `).join('');
 
         // === SCROLL REVEAL ===
