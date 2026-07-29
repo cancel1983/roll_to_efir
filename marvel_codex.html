@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARVEL CODEX — Интерактивная энциклопедия MCU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --marvel-red: #EC1D24;
+            --gold: #F0B429;
+            --dark-graphite: #0a0b10;
+            --medium-graphite: #1a1c24;
+            --light-graphite: #2a2d38;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b3c0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--dark-graphite);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Фон с текстурой */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .bg-base {
+            background: linear-gradient(180deg, #0a0b10 0%, #12141c 50%, #0a0b10 100%);
+        }
+
+        .bg-texture {
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .bg-glow {
+            background: radial-gradient(ellipse at 20% 30%, rgba(236, 29, 36, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 70%, rgba(240, 180, 41, 0.05) 0%, transparent 50%);
+        }
+
+        /* Прогресс-бар */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--marvel-red), var(--gold));
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+
+        /* Навигация */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            background: rgba(10, 11, 16, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-logo {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            color: var(--marvel-red);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--marvel-red);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* HERO секция */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(3rem, 15vw, 12rem);
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-title .marvel {
+            display: block;
+            color: var(--marvel-red);
+            text-shadow: 0 0 60px rgba(236, 29, 36, 0.5);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .hero-title .codex {
+            display: block;
+            color: var(--text-primary);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 60px rgba(236, 29, 36, 0.5); }
+            to { text-shadow: 0 0 80px rgba(236, 29, 36, 0.8), 0 0 120px rgba(236, 29, 36, 0.4); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .phase-counter {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .phase-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .phase-badge.active {
+            background: var(--marvel-red);
+            border-color: var(--marvel-red);
+            transform: scale(1.05);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--text-secondary);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Общие стили секций */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--marvel-red);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Анимация появления */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Таймлайн */
+        .timeline-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(236, 29, 36, 0.03) 50%, transparent 100%);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--marvel-red), var(--gold));
+        }
+
+        .timeline-phase {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-phase::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0;
+            width: 1rem;
+            height: 1rem;
+            background: var(--marvel-red);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .phase-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-films {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Карточка фильма */
+        .movie-card {
+            background: var(--medium-graphite);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(236, 29, 36, 0.2);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s;
+        }
+
+        .movie-card:hover .movie-poster {
+            transform: scale(1.05);
+        }
+
+        .movie-info {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .movie-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, transparent, var(--medium-graphite));
+            pointer-events: none;
+        }
+
+        .movie-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .movie-title-en {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .movie-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .movie-rating {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .rating-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .rating-badge.kp { color: #ffcc00; }
+        .rating-badge.imdb { color: #f5c518; }
+
+        /* Фильтры */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--marvel-red);
+            border-color: var(--marvel-red);
+            color: var(--text-primary);
+        }
+
+        .sort-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .sort-btn {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sort-btn:hover,
+        .sort-btn.active {
+            background: var(--gold);
+            color: var(--dark-graphite);
+        }
+
+        /* Персонажи */
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .character-card {
+            background: var(--medium-graphite);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .character-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem;
+            border: 3px solid var(--marvel-red);
+            background: var(--light-graphite);
+        }
+
+        .character-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .character-actor {
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .character-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--medium-graphite);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--marvel-red);
+        }
+
+        /* Статистика */
+        .stats-section {
+            background: linear-gradient(180deg, transparent 0%, rgba(240, 180, 41, 0.03) 50%, transparent 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--medium-graphite);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 3px solid var(--marvel-red);
+        }
+
+        .stat-value {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 3rem;
+        }
+
+        .chart-wrapper {
+            background: var(--medium-graphite);
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .chart-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 80px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--marvel-red), var(--gold));
+            border-radius: 4px;
+            transition: width 1s ease-out;
+            width: 0;
+        }
+
+        .bar-value {
+            width: 60px;
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Порядок просмотра */
+        .viewing-order {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .order-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 2px solid var(--marvel-red);
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn.active {
+            background: var(--marvel-red);
+        }
+
+        .order-list {
+            list-style: none;
+            counter-reset: order-counter;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            background: var(--medium-graphite);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .order-item:hover {
+            background: var(--light-graphite);
+            transform: translateX(10px);
+        }
+
+        .order-item::before {
+            counter-increment: order-counter;
+            content: counter(order-counter);
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            min-width: 40px;
+        }
+
+        .order-item-title {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .order-item-year {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Артефакты */
+        .artifacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .artifact-card {
+            background: var(--medium-graphite);
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .artifact-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .artifact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .artifact-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .artifact-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--medium-graphite);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-logo {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3rem;
+            color: var(--marvel-red);
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .footer-disclaimer {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            section {
+                padding: 4rem 1rem;
+            }
+
+            .timeline {
+                padding-left: 1rem;
+            }
+
+            .timeline::before {
+                left: 0.5rem;
+            }
+
+            .timeline-phase::before {
+                left: -1rem;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-poster {
+                height: 300px;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Скрытие элементов при фильтрации */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Фоновые слои -->
+    <div class="bg-layer bg-base"></div>
+    <div class="bg-layer bg-texture"></div>
+    <div class="bg-layer bg-glow"></div>
+
+    <!-- Прогресс-бар -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Навигация -->
+    <nav class="nav">
+        <div class="nav-logo">MARVEL CODEX</div>
+        <ul class="nav-links">
+            <li><a href="#timeline">Таймлайн</a></li>
+            <li><a href="#movies">Фильмы</a></li>
+            <li><a href="#characters">Персонажи</a></li>
+            <li><a href="#stats">Статистика</a></li>
+            <li><a href="#viewing">Порядок</a></li>
+            <li><a href="#artifacts">Артефакты</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="marvel">MARVEL</span>
+                <span class="codex">CODEX</span>
+            </h1>
+            <p class="hero-subtitle">Интерактивная энциклопедия киновселенной Marvel</p>
+            <div class="phase-counter" id="phase-counter">
+                <div class="phase-badge active">Фаза 1</div>
+                <div class="phase-badge">Фаза 2</div>
+                <div class="phase-badge">Фаза 3</div>
+                <div class="phase-badge">Фаза 4</div>
+                <div class="phase-badge">Фаза 5</div>
+                <div class="phase-badge">Фаза 6</div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Таймлайн -->
+    <section class="timeline-section" id="timeline">
+        <div class="section-header reveal">
+            <h2 class="section-title">Хронология Саги</h2>
+            <p class="section-subtitle">Путешествие через все фазы киновселенной Marvel</p>
+        </div>
+        <div class="timeline" id="timeline-container"></div>
+    </section>
+
+    <!-- Фильмотека -->
+    <section id="movies">
+        <div class="section-header reveal">
+            <h2 class="section-title">Фильмотека</h2>
+            <p class="section-subtitle">Все фильмы основной саги в деталях</p>
+        </div>
+        <div class="filters reveal" id="phase-filters">
+            <button class="filter-btn active" data-phase="all">Все</button>
+            <button class="filter-btn" data-phase="1">Фаза 1</button>
+            <button class="filter-btn" data-phase="2">Фаза 2</button>
+            <button class="filter-btn" data-phase="3">Фаза 3</button>
+            <button class="filter-btn" data-phase="4">Фаза 4</button>
+            <button class="filter-btn" data-phase="5">Фаза 5</button>
+            <button class="filter-btn" data-phase="6">Фаза 6</button>
+        </div>
+        <div class="sort-controls reveal">
+            <button class="sort-btn active" data-sort="year">По году</button>
+            <button class="sort-btn" data-sort="rating">По рейтингу</button>
+            <button class="sort-btn" data-sort="boxoffice">По сборам</button>
+        </div>
+        <div class="timeline-films reveal" id="movies-grid"></div>
+    </section>
+
+    <!-- Персонажи -->
+    <section id="characters">
+        <div class="section-header reveal">
+            <h2 class="section-title">Персонажи</h2>
+            <p class="section-subtitle">Герои и злодеи, создавшие легенду</p>
+        </div>
+        <div class="search-box reveal">
+            <input type="text" class="search-input" id="character-search" placeholder="Поиск по имени или актёру...">
+        </div>
+        <div class="characters-grid reveal" id="characters-grid"></div>
+    </section>
+
+    <!-- Статистика -->
+    <section class="stats-section" id="stats">
+        <div class="section-header reveal">
+            <h2 class="section-title">Статистика</h2>
+            <p class="section-subtitle">Цифры и факты о вселенной Marvel</p>
+        </div>
+        <div class="stats-grid reveal" id="stats-grid"></div>
+        <div class="charts-container reveal">
+            <div class="chart-wrapper">
+                <h3 class="chart-title">Фильмы по фазам</h3>
+                <div class="bar-chart" id="phase-chart"></div>
+            </div>
+            <div class="chart-wrapper">
+                <h3 class="chart-title">Средний рейтинг по фазам</h3>
+                <div class="bar-chart" id="rating-chart"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Порядок просмотра -->
+    <section id="viewing">
+        <div class="section-header reveal">
+            <h2 class="section-title">Порядок просмотра</h2>
+            <p class="section-subtitle">Выберите способ погружения во вселенную</p>
+        </div>
+        <div class="viewing-order reveal">
+            <div class="order-toggle">
+                <button class="toggle-btn active" data-order="release">По дате выхода</button>
+                <button class="toggle-btn" data-order="chrono">Хронологический</button>
+            </div>
+            <ol class="order-list" id="order-list"></ol>
+        </div>
+    </section>
+
+    <!-- Артефакты -->
+    <section id="artifacts">
+        <div class="section-header reveal">
+            <h2 class="section-title">Артефакты и Концепции</h2>
+            <p class="section-subtitle">Ключевые элементы вселенной Marvel</p>
+        </div>
+        <div class="artifacts-grid reveal" id="artifacts-grid"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">MARVEL CODEX</div>
+        <p class="footer-text">
+            Интерактивная энциклопедия киновселенной Marvel, созданная для фанатов.<br>
+            Содержит информацию о всех фильмах основной саги, персонажах и ключевых событиях.
+        </p>
+        <div class="footer-disclaimer">
+            Marvel и все связанные персонажи являются товарными знаками Marvel Characters, Inc.<br>
+            Проект создан в образовательных целях и не является официальным продуктом Marvel.
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // ДАННЫЕ MARVEL CODEX
+        // ============================================
+        const marvelData = {
+            movies: [
+                // Фаза 1
+                { id: 1, title_ru: "Железный человек", title_en: "Iron Man", year: 2008, phase: 1, rating_kp: 7.8, rating_imdb: 7.9, box_office: 585366247, runtime: 126, director: "Джон Фавро", chrono_order: 1, poster: "https://image.tmdb.org/t/p/w500/78lPtwv72eTNqFW9COBYI0dWDJa.jpg" },
+                { id: 2, title_ru: "Невероятный Халк", title_en: "The Incredible Hulk", year: 2008, phase: 1, rating_kp: 6.7, rating_imdb: 6.7, box_office: 264777800, runtime: 112, director: "Луи Летерье", chrono_order: 2, poster: "https://image.tmdb.org/t/p/w500/gKzYx79y0AQTL4UAk1cLeQyHtOT.jpg" },
+                { id: 3, title_ru: "Железный человек 2", title_en: "Iron Man 2", year: 2010, phase: 1, rating_kp: 7.0, rating_imdb: 7.0, box_office: 623933331, runtime: 124, director: "Джон Фавро", chrono_order: 3, poster: "https://image.tmdb.org/t/p/w500/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg" },
+                { id: 4, title_ru: "Тор", title_en: "Thor", year: 2011, phase: 1, rating_kp: 7.0, rating_imdb: 7.0, box_office: 449326618, runtime: 115, director: "Кеннет Брана", chrono_order: 4, poster: "https://image.tmdb.org/t/p/w500/bIuOWTtyFPjsFDevqvF3QrD1aun.jpg" },
+                { id: 5, title_ru: "Первый мститель", title_en: "Captain America: The First Avenger", year: 2011, phase: 1, rating_kp: 7.1, rating_imdb: 6.9, box_office: 370569774, runtime: 124, director: "Джо Джонстон", chrono_order: 5, poster: "https://image.tmdb.org/t/p/w500/vSNxAJTlD0r02V9sPYpOjqDZXUK.jpg" },
+                { id: 6, title_ru: "Мстители", title_en: "The Avengers", year: 2012, phase: 1, rating_kp: 7.8, rating_imdb: 8.0, box_office: 1518812988, runtime: 143, director: "Джосс Уидон", chrono_order: 6, poster: "https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg" },
+                
+                // Фаза 2
+                { id: 7, title_ru: "Железный человек 3", title_en: "Iron Man 3", year: 2013, phase: 2, rating_kp: 7.4, rating_imdb: 7.1, box_office: 1214811252, runtime: 130, director: "Шейн Блэк", chrono_order: 7, poster: "https://image.tmdb.org/t/p/w500/qhPtAc1TKbMPqNvcdXSOn9Bn7hZ.jpg" },
+                { id: 8, title_ru: "Тор 2: Царство тьмы", title_en: "Thor: The Dark World", year: 2013, phase: 2, rating_kp: 6.9, rating_imdb: 6.8, box_office: 644783140, runtime: 112, director: "Алан Тейлор", chrono_order: 8, poster: "https://image.tmdb.org/t/p/w500/wp6OxE4poJ4G7c0U2ZSlasRDvDL.jpg" },
+                { id: 9, title_ru: "Первый мститель: Другая война", title_en: "Captain America: The Winter Soldier", year: 2014, phase: 2, rating_kp: 7.7, rating_imdb: 7.7, box_office: 714421503, runtime: 136, director: "Энтони Руссо, Джо Руссо", chrono_order: 9, poster: "https://image.tmdb.org/t/p/w500/tVFRpFw3xTedgPGqxW0AOI8Qhh0.jpg" },
+                { id: 10, title_ru: "Стражи Галактики", title_en: "Guardians of the Galaxy", year: 2014, phase: 2, rating_kp: 7.7, rating_imdb: 8.0, box_office: 773328629, runtime: 121, director: "Джеймс Ганн", chrono_order: 10, poster: "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJWQh89Edlhxeup.jpg" },
+                { id: 11, title_ru: "Мстители: Эра Альтрона", title_en: "Avengers: Age of Ultron", year: 2015, phase: 2, rating_kp: 7.5, rating_imdb: 7.3, box_office: 1402805868, runtime: 141, director: "Джосс Уидон", chrono_order: 11, poster: "https://image.tmdb.org/t/p/w500/4ssDvED8nS8qGp1fkOSxLUZSR7T.jpg" },
+                { id: 12, title_ru: "Человек-муравей", title_en: "Ant-Man", year: 2015, phase: 2, rating_kp: 7.3, rating_imdb: 7.3, box_office: 519311965, runtime: 117, director: "Пейтон Рид", chrono_order: 12, poster: "https://image.tmdb.org/t/p/w500/rQRnQfUl3kfp78nMOq1z8SA8fmo.jpg" },
+                
+                // Фаза 3
+                { id: 13, title_ru: "Первый мститель: Противостояние", title_en: "Captain America: Civil War", year: 2016, phase: 3, rating_kp: 7.6, rating_imdb: 7.8, box_office: 1153304495, runtime: 147, director: "Энтони Руссо, Джо Руссо", chrono_order: 13, poster: "https://image.tmdb.org/t/p/w500/rAGiXaUfPu0D-X2DbVNXXjX1XAC.jpg" },
+                { id: 14, title_ru: "Доктор Стрэндж", title_en: "Doctor Strange", year: 2016, phase: 3, rating_kp: 7.2, rating_imdb: 7.5, box_office: 677718395, runtime: 115, director: "Скотт Дерриксон", chrono_order: 14, poster: "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg" },
+                { id: 15, title_ru: "Стражи Галактики. Часть 2", title_en: "Guardians of the Galaxy Vol. 2", year: 2017, phase: 3, rating_kp: 7.5, rating_imdb: 7.6, box_office: 863756051, runtime: 136, director: "Джеймс Ганн", chrono_order: 15, poster: "https://image.tmdb.org/t/p/w500/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg" },
+                { id: 16, title_ru: "Человек-паук: Возвращение домой", title_en: "Spider-Man: Homecoming", year: 2017, phase: 3, rating_kp: 7.5, rating_imdb: 7.4, box_office: 880166924, runtime: 133, director: "Джон Уоттс", chrono_order: 16, poster: "https://image.tmdb.org/t/p/w500/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg" },
+                { id: 17, title_ru: "Тор: Рагнарёк", title_en: "Thor: Ragnarok", year: 2017, phase: 3, rating_kp: 7.6, rating_imdb: 7.9, box_office: 853977126, runtime: 130, director: "Тайка Вайтити", chrono_order: 17, poster: "https://image.tmdb.org/t/p/w500/rzRwTcFvttcN1ZpX2xv4j3tSdJu.jpg" },
+                { id: 18, title_ru: "Чёрная пантера", title_en: "Black Panther", year: 2018, phase: 3, rating_kp: 7.2, rating_imdb: 7.3, box_office: 1346913161, runtime: 134, director: "Райан Куглер", chrono_order: 18, poster: "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFVMotPvYWuyk.jpg" },
+                { id: 19, title_ru: "Мстители: Война бесконечности", title_en: "Avengers: Infinity War", year: 2018, phase: 3, rating_kp: 8.0, rating_imdb: 8.4, box_office: 2048359754, runtime: 149, director: "Энтони Руссо, Джо Руссо", chrono_order: 19, poster: "https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg" },
+                { id: 20, title_ru: "Человек-муравей и Оса", title_en: "Ant-Man and the Wasp", year: 2018, phase: 3, rating_kp: 7.0, rating_imdb: 7.0, box_office: 622674139, runtime: 118, director: "Пейтон Рид", chrono_order: 20, poster: "https://image.tmdb.org/t/p/w500/eivQmSknwGSioSmOPwnkwMcQuky.jpg" },
+                { id: 21, title_ru: "Капитан Марвел", title_en: "Captain Marvel", year: 2019, phase: 3, rating_kp: 6.5, rating_imdb: 6.8, box_office: 1128274794, runtime: 123, director: "Анна Боден, Райан Флек", chrono_order: 21, poster: "https://image.tmdb.org/t/p/w500/AtsgWhDnHq92fMp6RsNbAb7bHA4.jpg" },
+                { id: 22, title_ru: "Мстители: Финал", title_en: "Avengers: Endgame", year: 2019, phase: 3, rating_kp: 8.0, rating_imdb: 8.4, box_office: 2797800564, runtime: 181, director: "Энтони Руссо, Джо Руссо", chrono_order: 22, poster: "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg" },
+                { id: 23, title_ru: "Человек-паук: Вдали от дома", title_en: "Spider-Man: Far From Home", year: 2019, phase: 3, rating_kp: 7.4, rating_imdb: 7.4, box_office: 1131927996, runtime: 129, director: "Джон Уоттс", chrono_order: 23, poster: "https://image.tmdb.org/t/p/w500/4q2NNj4S5dG2RLF9CpXsej7yXl.jpg" },
+                
+                // Фаза 4
+                { id: 24, title_ru: "Чёрная вдова", title_en: "Black Widow", year: 2021, phase: 4, rating_kp: 6.6, rating_imdb: 6.7, box_office: 379751131, runtime: 134, director: "Кейт Шортланд", chrono_order: 24, poster: "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg" },
+                { id: 25, title_ru: "Шан-Чи и легенда десяти колец", title_en: "Shang-Chi and the Legend of the Ten Rings", year: 2021, phase: 4, rating_kp: 7.0, rating_imdb: 7.4, box_office: 432243292, runtime: 132, director: "Дестин Дэниел Креттон", chrono_order: 25, poster: "https://image.tmdb.org/t/p/w500/1BIoJGKbXjdFDAqUEiA2VHqkK1Z.jpg" },
+                { id: 26, title_ru: "Вечные", title_en: "Eternals", year: 2021, phase: 4, rating_kp: 6.2, rating_imdb: 6.3, box_office: 402064899, runtime: 156, director: "Хлоя Чжао", chrono_order: 26, poster: "https://image.tmdb.org/t/p/w500/6AdXwFTRTAzggD2QUTt5B7JFGKL.jpg" },
+                { id: 27, title_ru: "Человек-паук: Нет пути домой", title_en: "Spider-Man: No Way Home", year: 2021, phase: 4, rating_kp: 8.0, rating_imdb: 8.2, box_office: 1921847111, runtime: 148, director: "Джон Уоттс", chrono_order: 27, poster: "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg" },
+                { id: 28, title_ru: "Доктор Стрэндж: В мультивселенной безумия", title_en: "Doctor Strange in the Multiverse of Madness", year: 2022, phase: 4, rating_kp: 6.9, rating_imdb: 6.9, box_office: 955775804, runtime: 126, director: "Сэм Рэйми", chrono_order: 28, poster: "https://image.tmdb.org/t/p/w500/uGBVj3bEbCoZbDjjl9wTxcygko1.jpg" },
+                { id: 29, title_ru: "Тор: Любовь и гром", title_en: "Thor: Love and Thunder", year: 2022, phase: 4, rating_kp: 6.4, rating_imdb: 6.2, box_office: 760928081, runtime: 119, director: "Тайка Вайтити", chrono_order: 29, poster: "https://image.tmdb.org/t/p/w500/pIkRyD18kl4FhoCNrWxWzfznALq.jpg" },
+                { id: 30, title_ru: "Чёрная пантера: Ваканда навсегда", title_en: "Black Panther: Wakanda Forever", year: 2022, phase: 4, rating_kp: 6.8, rating_imdb: 6.7, box_office: 859208305, runtime: 161, director: "Райан Куглер", chrono_order: 30, poster: "https://image.tmdb.org/t/p/w500/sv1xJUazXeYqALzczSZ3O6nkH75.jpg" },
+                
+                // Фаза 5
+                { id: 31, title_ru: "Человек-муравей и Оса: Квантомания", title_en: "Ant-Man and the Wasp: Quantumania", year: 2023, phase: 5, rating_kp: 6.4, rating_imdb: 6.1, box_office: 476071180, runtime: 124, director: "Пейтон Рид", chrono_order: 31, poster: "https://image.tmdb.org/t/p/w500/ngl2FASt8dvjvAHcu75kuYCJHQS.jpg" },
+                { id: 32, title_ru: "Стражи Галактики. Часть 3", title_en: "Guardians of the Galaxy Vol. 3", year: 2023, phase: 5, rating_kp: 7.7, rating_imdb: 7.9, box_office: 845555777, runtime: 150, director: "Джеймс Ганн", chrono_order: 32, poster: "https://image.tmdb.org/t/p/w500/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg" },
+                { id: 33, title_ru: "Капитан Марвел 2", title_en: "The Marvels", year: 2023, phase: 5, rating_kp: 5.8, rating_imdb: 5.5, box_office: 206136825, runtime: 105, director: "Ния Дакоста", chrono_order: 33, poster: "https://image.tmdb.org/t/p/w500/9GBhzXMFjgcZ3FdR9w3bUMQLps5.jpg" },
+                { id: 34, title_ru: "Дэдпул и Росомаха", title_en: "Deadpool & Wolverine", year: 2024, phase: 5, rating_kp: 7.8, rating_imdb: 7.7, box_office: 1338073645, runtime: 128, director: "Шон Леви", chrono_order: 34, poster: "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" },
+                
+                // Фаза 6
+                { id: 35, title_ru: "Капитан Америка: Новый порядок", title_en: "Captain America: Brave New World", year: 2025, phase: 6, rating_kp: null, rating_imdb: null, box_office: null, runtime: null, director: "Джулиус Она", chrono_order: 35, poster: "https://image.tmdb.org/t/p/w500/8uVKfOJNYKD5t6bqkJJvJhJKJJJ.jpg" },
+                { id: 36, title_ru: "Громовержцы", title_en: "Thunderbolts", year: 2025, phase: 6, rating_kp: null, rating_imdb: null, box_office: null, runtime: null, director: "Джейк Шрайер", chrono_order: 36, poster: "https://image.tmdb.org/t/p/w500/nDJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 37, title_ru: "Фантастическая четвёрка", title_en: "The Fantastic Four", year: 2025, phase: 6, rating_kp: null, rating_imdb: null, box_office: null, runtime: null, director: "Мэтт Шекман", chrono_order: 37, poster: "https://image.tmdb.org/t/p/w500/fJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 38, title_ru: "Мстители: Династия Канга", title_en: "Avengers: Doomsday", year: 2026, phase: 6, rating_kp: null, rating_imdb: null, box_office: null, runtime: null, director: "Энтони Руссо, Джо Руссо", chrono_order: 38, poster: "https://image.tmdb.org/t/p/w500/kJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 39, title_ru: "Мстители: Секретные войны", title_en: "Avengers: Secret Wars", year: 2026, phase: 6, rating_kp: null, rating_imdb: null, box_office: null, runtime: null, director: "Энтони Руссо, Джо Руссо", chrono_order: 39, poster: "https://image.tmdb.org/t/p/w500/lJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" }
+            ],
+            
+            characters: [
+                { id: 1, name: "Тони Старк / Железный человек", actor: "Роберт Дауни мл.", first_appearance: "Железный человек (2008)", appearances: 10, avatar: "https://image.tmdb.org/t/p/w200/5qHNjhtjMD4YWH3og6rmJyIXDPL.jpg" },
+                { id: 2, name: "Стив Роджерс / Капитан Америка", actor: "Крис Эванс", first_appearance: "Первый мститель (2011)", appearances: 9, avatar: "https://image.tmdb.org/t/p/w200/3bOGNsHlrswhyW79uvIHH1V43JI.jpg" },
+                { id: 3, name: "Тор", actor: "Крис Хемсворт", first_appearance: "Тор (2011)", appearances: 9, avatar: "https://image.tmdb.org/t/p/w200/j99CWLOz4n8sVqLNFDkPXPTjPJg.jpg" },
+                { id: 4, name: "Брюс Бэннер / Халк", actor: "Марк Руффало", first_appearance: "Мстители (2012)", appearances: 8, avatar: "https://image.tmdb.org/t/p/w200/isJHe3DGHwsNmHPqhHnLbHOdRHX.jpg" },
+                { id: 5, name: "Наташа Романофф / Чёрная вдова", actor: "Скарлетт Йоханссон", first_appearance: "Железный человек 2 (2010)", appearances: 9, avatar: "https://image.tmdb.org/t/p/w200/6NsMbJXRlDZuDzatN2akFdGuTvx.jpg" },
+                { id: 6, name: "Клинт Бартон / Соколиный глаз", actor: "Джереми Реннер", first_appearance: "Тор (2011)", appearances: 7, avatar: "https://image.tmdb.org/t/p/w200/yEXdX6XbpVGspjLwaHLqJLXPPqw.jpg" },
+                { id: 7, name: "Питер Паркер / Человек-паук", actor: "Том Холланд", first_appearance: "Первый мститель: Противостояние (2016)", appearances: 6, avatar: "https://image.tmdb.org/t/p/w200/bqZZbFLUVjfwXxwSHjJfcJhOUOV.jpg" },
+                { id: 8, name: "Т'Чалла / Чёрная пантера", actor: "Чедвик Боузман", first_appearance: "Первый мститель: Противостояние (2016)", appearances: 4, avatar: "https://image.tmdb.org/t/p/w200/9kWhe3PGRz44N5X6lWRfmhxrwrD.jpg" },
+                { id: 9, name: "Ванда Максимофф / Алая ведьма", actor: "Элизабет Олсен", first_appearance: "Первый мститель: Другая война (2014)", appearances: 7, avatar: "https://image.tmdb.org/t/p/w200/7nMdAJHNEkGdLSwZdxdxdlxbxJH.jpg" },
+                { id: 10, name: "Вижн", actor: "Пол Беттани", first_appearance: "Мстители: Эра Альтрона (2015)", appearances: 4, avatar: "https://image.tmdb.org/t/p/w200/qJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 11, name: "Скотт Лэнг / Человек-муравей", actor: "Пол Радд", first_appearance: "Человек-муравей (2015)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/8eTtJ7XIJeJsIB1RIhUmJhJhJhJ.jpg" },
+                { id: 12, name: "Хоуп ван Дайн / Оса", actor: "Эванджелин Лилли", first_appearance: "Человек-муравей (2015)", appearances: 4, avatar: "https://image.tmdb.org/t/p/w200/9JJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 13, name: "Питер Квилл / Звёздный лорд", actor: "Крис Пратт", first_appearance: "Стражи Галактики (2014)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/gxKYJDhJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 14, name: "Гамора", actor: "Зои Салдана", first_appearance: "Стражи Галактики (2014)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/JJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 15, name: "Дракс", actor: "Дэйв Батиста", first_appearance: "Стражи Галактики (2014)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/KJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 16, name: "Грут", actor: "Вин Дизель (голос)", first_appearance: "Стражи Галактики (2014)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/LJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 17, name: "Ракета", actor: "Брэдли Купер (голос)", first_appearance: "Стражи Галактики (2014)", appearances: 5, avatar: "https://image.tmdb.org/t/p/w200/MJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 18, name: "Доктор Стрэндж", actor: "Бенедикт Камбербэтч", first_appearance: "Доктор Стрэндж (2016)", appearances: 6, avatar: "https://image.tmdb.org/t/p/w200/NJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 19, name: "Локи", actor: "Том Хиддлстон", first_appearance: "Тор (2011)", appearances: 7, avatar: "https://image.tmdb.org/t/p/w200/OJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 20, name: "Ник Фьюри", actor: "Сэмюэл Л. Джексон", first_appearance: "Железный человек (2008)", appearances: 11, avatar: "https://image.tmdb.org/t/p/w200/PJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 21, name: "Кэрол Дэнверс / Капитан Марвел", actor: "Бри Ларсон", first_appearance: "Капитан Марвел (2019)", appearances: 4, avatar: "https://image.tmdb.org/t/p/w200/QJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 22, name: "Шаuri / Чёрная пантера", actor: "Летишия Райт", first_appearance: "Чёрная пантера (2018)", appearances: 3, avatar: "https://image.tmdb.org/t/p/w200/RJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 23, name: "Усагиро / Зимний солдат", actor: "Себастиан Стэн", first_appearance: "Первый мститель (2011)", appearances: 8, avatar: "https://image.tmdb.org/t/p/w200/SJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 24, name: "Шан-Чи", actor: "Симу Лю", first_appearance: "Шан-Чи (2021)", appearances: 2, avatar: "https://image.tmdb.org/t/p/w200/TJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" },
+                { id: 25, name: "Уэйд Уилсон / Дэдпул", actor: "Райан Рейнольдс", first_appearance: "Дэдпул и Росомаха (2024)", appearances: 3, avatar: "https://image.tmdb.org/t/p/w200/UJJJJJJJJJJJJJJJJJJJJJJJJJJ.jpg" }
+            ],
+            
+            timeline: [
+                { year: "1940-е", event: "Стив Роджерс становится Капитаном Америкой", movie: "Первый мститель" },
+                { year: "1995", event: "Кэрол Дэнверс получает силы Капитана Марвел", movie: "Капитан Марвел" },
+                { year: "2008", event: "Тони Старк становится Железным человеком", movie: "Железный человек" },
+                { year: "2008", event: "Брюс Бэннер превращается в Халка", movie: "Невероятный Халк" },
+                { year: "2011", event: "Тор изгнан на Землю", movie: "Тор" },
+                { year: "2012", event: "Битва за Нью-Йорк, формирование Мстителей", movie: "Мстители" },
+                { year: "2013", event: "Битва за Гринвич", movie: "Тор 2: Царство тьмы" },
+                { year: "2014", event: "Падение Щ.И.Т.а", movie: "Первый мститель: Другая война" },
+                { year: "2014", event: "Стражи Галактики спасают галактику", movie: "Стражи Галактики" },
+                { year: "2015", event: "Создание Альтрона", movie: "Мстители: Эра Альтрона" },
+                { year: "2016", event:
+        // ============================================
+        // ПРИЛОЖЕНИЕ MARVEL CODEX
+        // ============================================
+        
+        // Canvas анимация для HERO
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouseX = 0, mouseY = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.color = Math.random() > 0.5 ? '#EC1D24' : '#F0B429';
+            }
+            update() {
+                this.x += this.speedX + (mouseX - canvas.width/2) * 0.0001;
+                this.y += this.speedY + (mouseY - canvas.height/2) * 0.0001;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+        // Прогресс-бар скролла
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+            
+            // Активная навигация
+            document.querySelectorAll('section').forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    document.querySelectorAll('.nav-links a').forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === '#' + section.id);
+                    });
+                }
+            });
+        });
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Рендер фильмов
+        function renderMovies(movies) {
+            const grid = document.getElementById('movies-grid');
+            grid.innerHTML = movies.map(m => `
+                <div class="movie-card" data-phase="${m.phase}">
+                    <img src="${m.poster}" alt="${m.title_ru}" class="movie-poster" onerror="this.src='https://via.placeholder.com/500x750/1a1c24/F0B429?text=${encodeURIComponent(m.title_en)}'">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${m.title_ru}</h3>
+                        <p class="movie-title-en">${m.title_en}</p>
+                        <div class="movie-meta">
+                            <span>${m.year}</span>
+                            <span>Фаза ${m.phase}</span>
+                            <span>${m.runtime ? m.runtime + ' мин' : 'TBA'}</span>
+                        </div>
+                        <div class="movie-rating">
+                            ${m.rating_kp ? `<span class="rating-badge kp">KP: ${m.rating_kp}</span>` : ''}
+                            ${m.rating_imdb ? `<span class="rating-badge imdb">IMDb: ${m.rating_imdb}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        renderMovies(marvelData.movies);
+
+        // Фильтры по фазам
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const phase = btn.dataset.phase;
+                const filtered = phase === 'all' ? marvelData.movies : marvelData.movies.filter(m => m.phase == phase);
+                renderMovies(filtered);
+            });
+        });
+
+        // Сортировка
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const sort = btn.dataset.sort;
+                let sorted = [...marvelData.movies];
+                if (sort === 'year') sorted.sort((a, b) => a.year - b.year);
+                if (sort === 'rating') sorted.sort((a, b) => (b.rating_kp || 0) - (a.rating_kp || 0));
+                if (sort === 'boxoffice') sorted.sort((a, b) => (b.box_office || 0) - (a.box_office || 0));
+                renderMovies(sorted);
+            });
+        });
+
+        // Рендер персонажей
+        function renderCharacters(chars) {
+            const grid = document.getElementById('characters-grid');
+            grid.innerHTML = chars.map(c => `
+                <div class="character-card">
+                    <img src="${c.avatar}" alt="${c.name}" class="character-avatar" onerror="this.src='https://via.placeholder.com/200x200/1a1c24/F0B429?text=${encodeURIComponent(c.name.split('/')[0].trim())}'">
+                    <h3 class="character-name">${c.name}</h3>
+                    <p class="character-actor">${c.actor}</p>
+                    <div class="character-stats">
+                        <span>Появлений: ${c.appearances}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        renderCharacters(marvelData.characters);
+
+        // Поиск персонажей
+        document.getElementById('character-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = marvelData.characters.filter(c => 
+                c.name.toLowerCase().includes(query) || c.actor.toLowerCase().includes(query)
+            );
+            renderCharacters(filtered);
+        });
+
+        // Статистика
+        const totalBoxOffice = marvelData.movies.reduce((sum, m) => sum + (m.box_office || 0), 0);
+        const avgRating = marvelData.movies.filter(m => m.rating_kp).reduce((sum, m) => sum + m.rating_kp, 0) / marvelData.movies.filter(m => m.rating_kp).length;
+        const phasesCount = {};
+        marvelData.movies.forEach(m => { phasesCount[m.phase] = (phasesCount[m.phase] || 0) + 1; });
+
+        document.getElementById('stats-grid').innerHTML = `
+            <div class="stat-card"><div class="stat-value">${marvelData.movies.length}</div><div class="stat-label">Фильмов</div></div>
+            <div class="stat-card"><div class="stat-value">${marvelData.characters.length}</div><div class="stat-label">Персонажей</div></div>
+            <div class="stat-card"><div class="stat-value">${(totalBoxOffice / 1e9).toFixed(1)}B</div><div class="stat-label">Сборы ($)</div></div>
+            <div class="stat-card"><div class="stat-value">${avgRating.toFixed(1)}</div><div class="stat-label">Средний рейтинг KP</div></div>
+        `;
+
+        // Графики
+        function renderBarChart(containerId, data, maxValue) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = Object.entries(data).map(([label, value]) => `
+                <div class="bar-item">
+                    <span class="bar-label">${label}</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: ${(value / maxValue) * 100}%"></div></div>
+                    <span class="bar-value">${value}</span>
+                </div>
+            `).join('');
+            setTimeout(() => {
+                container.querySelectorAll('.bar-fill').forEach(el => {
+                    el.style.width = el.style.width;
+                });
+            }, 100);
+        }
+
+        renderBarChart('phase-chart', phasesCount, Math.max(...Object.values(phasesCount)));
+        
+        const ratingsByPhase = {};
+        marvelData.movies.filter(m => m.rating_kp).forEach(m => {
+            if (!ratingsByPhase[m.phase]) ratingsByPhase[m.phase] = { sum: 0, count: 0 };
+            ratingsByPhase[m.phase].sum += m.rating_kp;
+            ratingsByPhase[m.phase].count++;
+        });
+        const avgRatings = {};
+        Object.entries(ratingsByPhase).forEach(([phase, data]) => {
+            avgRatings[phase] = (data.sum / data.count).toFixed(1);
+        });
+        renderBarChart('rating-chart', avgRatings, 10);
+
+        // Порядок просмотра
+        function renderOrderList(order) {
+            const list = document.getElementById('order-list');
+            const sorted = order === 'release' 
+                ? [...marvelData.movies].sort((a, b) => a.year - b.year || a.id - b.id)
+                : [...marvelData.movies].sort((a, b) => a.chrono_order - b.chrono_order);
+            list.innerHTML = sorted.map(m => `
+                <li class="order-item">
+                    <span class="order-item-title">${m.title_ru}</span>
+                    <span class="order-item-year">${m.year}</span>
+                </li>
+            `).join('');
+        }
+        renderOrderList('release');
+
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderOrderList(btn.dataset.order);
+            });
+        });
+
+        // Артефакты
+        document.getElementById('artifacts-grid').innerHTML = marvelData.artifacts.map(a => `
+            <div class="artifact-card">
+                <div class="artifact-icon">${a.icon}</div>
+                <h3 class="artifact-name">${a.name}</h3>
+                <p class="artifact-desc">${a.desc}</p>
+            </div>
+        `).join('');
+
+        // Таймлайн по фазам
+        const timelineContainer = document.getElementById('timeline-container');
+        for (let phase = 1; phase <= 6; phase++) {
+            const phaseMovies = marvelData.movies.filter(m => m.phase === phase);
+            if (phaseMovies.length === 0) continue;
+            timelineContainer.innerHTML += `
+                <div class="timeline-phase">
+                    <h3 class="phase-title">Фаза ${phase}</h3>
+                    <div class="timeline-films">
+                        ${phaseMovies.map(m => `
+                            <div class="movie-card">
+                                <img src="${m.poster}" alt="${m.title_ru}" class="movie-poster" style="height: 250px" onerror="this.src='https://via.placeholder.com/500x750/1a1c24/F0B429?text=${encodeURIComponent(m.title_en)}'">
+                                <div class="movie-info">
+                                    <h4 class="movie-title">${m.title_ru}</h4>
+                                    <p class="movie-title-en">${m.title_en}</p>
+                                    <div class="movie-meta"><span>${m.year}</span></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Анимация счётчиков статистики
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.stat-value').forEach(el => {
+                        const final = el.textContent;
+                        el.textContent = '0';
+                        let current = 0;
+                        const increment = parseFloat(final) / 50;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= parseFloat(final)) {
+                                el.textContent = final;
+                                clearInterval(timer);
+                            } else {
+                                el.textContent = final.includes('B') ? current.toFixed(1) + 'B' : Math.floor(current);
+                            }
+                        }, 30);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        statsObserver.observe(document.getElementById('stats-grid'));
+    </script>
+</body>
+</html>
