@@ -1,11 +1,3 @@
-.venv/
-venv/
-.env
-__pycache__/
-*.pyc
-.pytest_cache/
-build/
-dist/
-*.egg-info/
-*.mxf
-codex.patch
+Nothing should be ignored in this case, as the changes only include source/config files (data.json, index.html) without any build artifacts, dependencies, or temporary files.
+
+Output: (empty)
